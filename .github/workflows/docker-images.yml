@@ -1,0 +1,51 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - 'master'
+
+env:
+  APP_NAME: zhonger
+  DOCKERHUB_REPO: zhonger/ubuntu
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Alibaba Cloud Container Registry (ACR) Login
+        uses: aliyun/acr-login@v1
+        with:
+          login-server: https://registry.cn-shanghai.aliyuncs.com
+          region-id: cn-shanghai
+          access-key-id: ${{ secrets.ACR_KEY_ID }}
+          access-key-secret: ${{ secrets.ACR_KEY_SECRET }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: |
+            linux/386
+            linux/amd64
+            linux/arm/v5
+            linux/arm/v7
+            linux/arm64
+            linux/mips64le
+            linux/ppc64le
+            linux/s390x
+          push: true
+          build-args: |
+            APP_NAME=${{ env.APP_NAME }}
+          tags: |
+            registry.cn-shanghai.aliyuncs.com/${{ env.DOCKERHUB_REPO }}:latest
