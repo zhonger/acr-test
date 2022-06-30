@@ -26,10 +26,9 @@ jobs:
         name: Alibaba Cloud Container Registry (ACR) Login
         uses: aliyun/acr-login@v1
         with:
-          login-server: https://registry.cn-shanghai.aliyuncs.com
           region-id: cn-shanghai
-          access-key-id: ${{ secrets.ACR_KEY_ID }}
-          access-key-secret: ${{ secrets.ACR_KEY_SECRET }}
+          username: ${{ secrets.ACE_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
       -
         name: Build and push
         uses: docker/build-push-action@v3
